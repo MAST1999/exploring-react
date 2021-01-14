@@ -18,19 +18,28 @@ import {
 } from "@chakra-ui/react";
 import PhotoNav from "./components/PhotoNav";
 import MarkingComponent from "./components/MarkingComponent";
+import Labels from "./components/Labels";
 
 function App() {
   const [selectedPhoto, setSelectedPhoto] = useState("");
+  const [label, setLabel] = useState({ name: "", color: "" });
 
   const newPhotoSelection = (photoAddress) => {
-    console.log(photoAddress);
     setSelectedPhoto(photoAddress);
+  };
+
+  const newLabelSelection = (newLabelSelector) => {
+    setLabel(newLabelSelector);
   };
 
   return (
     <div className="App" style={{ height: "100%" }}>
       <ChakraProvider>
-        <Grid templateColumns="5fr 14fr 1fr" templateRows="7% 87% 6%" h="100%">
+        <Grid
+          templateColumns="5fr 14fr 1fr"
+          templateRows="minmax(54px, 7%) 87% minmax(42px, 6%)"
+          h="100%"
+        >
           <GridItem
             bg="green.200"
             borderBottom="1px solid"
@@ -62,7 +71,9 @@ function App() {
                   <TabPanel>
                     <PhotoNav flex="1" setPhoto={newPhotoSelection} />
                   </TabPanel>
-                  <TabPanel>Labels here</TabPanel>
+                  <TabPanel>
+                    <Labels setTheLabel={newLabelSelection} />
+                  </TabPanel>
                 </TabPanels>
               </Tabs>
             </Flex>
@@ -75,7 +86,7 @@ function App() {
             h="100%"
             overflow="auto"
           >
-            <MarkingComponent photo={selectedPhoto} />
+            <MarkingComponent photo={selectedPhoto} label={label} />
           </GridItem>
           <GridItem
             colStart={1}
