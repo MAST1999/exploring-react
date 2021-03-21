@@ -6,24 +6,25 @@ import {
   Flex,
   Grid,
   GridItem,
-  Text,
   theme,
 } from '@chakra-ui/react';
 import Navigation from './components/navigation/Navigation';
 import './App.css';
 import ImageCanvas from './components/mainPanel/ImageCanvas';
+import LeftControls from './components/mainPanel/LeftControls';
+import BottomTabs from './components/mainPanel/BottomTabs';
 
 function App() {
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme} h="100%">
       <CSSReset />
       <Grid
-        h="100%"
-        templateRows="45px 1fr"
+        h="100vh"
+        templateRows="45px 1fr 300px"
         templateColumns="1fr"
         gap={1}
-        marginTop={2}
-        marginX={1}
+        paddingTop={2}
+        paddingX={1}
       >
         {/* Navigation */}
         <GridItem h={47}>
@@ -32,12 +33,14 @@ function App() {
         </GridItem>
         {/* Main Panel */}
         <GridItem>
-          <Flex>
-            <Grid flexBasis="200px">
-              <Text>Hello</Text>
-            </Grid>
+          <Flex height="100%">
+            <LeftControls />
             <ImageCanvas />
           </Flex>
+        </GridItem>
+        {/* Bottom Panel */}
+        <GridItem>
+          <BottomTabs />
         </GridItem>
       </Grid>
     </ChakraProvider>
