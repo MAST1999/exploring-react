@@ -5,13 +5,29 @@ import {
   AccordionPanel,
 } from '@chakra-ui/accordion';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
-import { Text } from '@chakra-ui/layout';
+import { ListItem, OrderedList, Text } from '@chakra-ui/layout';
 import { Box, Grid } from '@chakra-ui/layout';
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 
-function LeftControls() {
+function LeftControls({ setPhoto }) {
+  const [allPhotos, setAllPhotos] = useState(null);
+  const accordionPhotoLoad = useRef(null);
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:4000/api/photos')
+      .then(photos => {
+        if (photos.data.length > 0) {
+          setAllPhotos(photos.data);
+        }
+      })
+      .catch(error => console.log(error));
+  }, []);
+
   return (
-    <Grid flexBasis="300px" mt={5}>
+    <Grid flexBasis="335px" mt={5}>
       <Accordion allowToggle allowMultiple>
         <AccordionItem>
           {({ isExpanded }) => (
@@ -36,7 +52,7 @@ function LeftControls() {
           {({ isExpanded }) => (
             <>
               <h2>
-                <AccordionButton>
+                <AccordionButton ref={accordionPhotoLoad}>
                   <Box flex="1" textAlign="left">
                     Loaded Images
                   </Box>
@@ -47,7 +63,25 @@ function LeftControls() {
                   )}
                 </AccordionButton>
               </h2>
-              <AccordionPanel pb={4}>Images Will Be here</AccordionPanel>
+              <AccordionPanel pb={4}>
+                <Box maxW="300px" maxH="700px" display="flex" overflow="auto">
+                  {allPhotos ? (
+                    <OrderedList>
+                      {allPhotos.map(photo => (
+                        <ListItem
+                          key={photo.id}
+                          path={photo.path}
+                          onClick={() => setPhoto(photo.path)}
+                        >
+                          {photo.name}
+                        </ListItem>
+                      ))}
+                    </OrderedList>
+                  ) : (
+                    <p>Upload some Photos</p>
+                  )}
+                </Box>
+              </AccordionPanel>
             </>
           )}
         </AccordionItem>
@@ -84,5 +118,9 @@ function LeftControls() {
     </Grid>
   );
 }
+
+LeftControls.propTypes = {
+  setPhoto: PropTypes.func,
+};
 
 export default LeftControls;

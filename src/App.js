@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ChakraProvider,
   CSSReset,
@@ -15,6 +15,8 @@ import LeftControls from './components/mainPanel/LeftControls';
 import BottomTabs from './components/mainPanel/BottomTabs';
 
 function App() {
+  const [photo, setPhoto] = useState('');
+
   return (
     <ChakraProvider theme={theme} h="100%">
       <CSSReset />
@@ -34,8 +36,8 @@ function App() {
         {/* Main Panel */}
         <GridItem>
           <Flex height="100%">
-            <LeftControls />
-            <ImageCanvas />
+            <LeftControls setPhoto={setPhoto} />
+            <ImageCanvas photo={photo} />
           </Flex>
         </GridItem>
         {/* Bottom Panel */}

@@ -24,48 +24,31 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/modal';
-import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 
 function Navigation() {
   const { register, handleSubmit } = useForm();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [fileName, setFileName] = useState(null);
 
-  const getFileName = value => {
-    const correctName = value.slice(12);
-    setFileName(correctName);
-  };
-
-  const onSubmit = data => {
+  const onSubmit = async data => {
     const formData = new FormData();
 
-    formData.append('picture', data.picture[0]);
-    formData.append('name', fileName);
-    formData.append('path', `http://localhost:4000/uploads/${fileName}`);
-    console.log(
-      formData.getAll('name'),
-      formData.getAll('path'),
-      formData.getAll('picture')
-    );
-    axios({
+    for (let i = 0; i < data.picture.length; i++) {
+      formData.append(`picture${i}`, data.picture[i]);
+      formData.append(`name${i}`, data.picture[i].name);
+      formData.append(
+        `path${i}`,
+        `http://localhost:4000/${data.picture[i].name}`
+      );
+    }
+
+    const res = await fetch('http://localhost:4000/api/photos', {
       method: 'POST',
-      url: 'http://localhost:4000/api/photos/',
-      data: formData,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers':
-          'Content-Type, Access-Control-Allow-Origin',
-      },
-    })
-      .then(res => {
-        res.json();
-        alert(JSON.stringify(res));
-      })
-      .catch(error => console.log(error));
+      body: formData,
+    }).then(res => res.json());
+    console.log(JSON.stringify(res));
   };
 
   return (
@@ -83,7 +66,7 @@ function Navigation() {
           </MenuButton>
           <MenuList>
             <MenuItem>
-              <Button onClick={onOpen}>Open Modal</Button>
+              <Box onClick={onOpen}>Upload Image</Box>
               <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
@@ -93,11 +76,11 @@ function Navigation() {
                     <form onSubmit={handleSubmit(onSubmit)}>
                       <Box
                         as="input"
+                        multiple
                         ref={register}
                         type="file"
                         name="picture"
                         maxW="100%"
-                        onChange={event => getFileName(event.target.value)}
                       />
                       <Button colorScheme="blue" type="submit" mt={3}>
                         Upload Photos
