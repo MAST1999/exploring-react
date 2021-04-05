@@ -27,10 +27,12 @@ import {
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
+import PropTypes from 'prop-types';
 
-function Navigation() {
+function Navigation({ useRefresh }) {
   const { register, handleSubmit } = useForm();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [refresh, setRefresh] = useRefresh;
 
   const onSubmit = async data => {
     const formData = new FormData();
@@ -48,7 +50,10 @@ function Navigation() {
       method: 'POST',
       body: formData,
     }).then(res => res.json());
-    console.log(JSON.stringify(res));
+    console.log(res);
+
+    onClose();
+    setRefresh(!refresh);
   };
 
   return (
@@ -221,3 +226,7 @@ function Navigation() {
 }
 
 export default Navigation;
+
+Navigation.propTypes = {
+  useRefresh: PropTypes.array,
+};

@@ -11,7 +11,7 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
-function LeftControls({ setPhoto }) {
+function LeftControls({ setPhoto, refresh }) {
   const [allPhotos, setAllPhotos] = useState(null);
   const accordionPhotoLoad = useRef(null);
 
@@ -24,7 +24,7 @@ function LeftControls({ setPhoto }) {
         }
       })
       .catch(error => console.log(error));
-  }, []);
+  }, [refresh]);
 
   return (
     <Grid flexBasis="335px" mt={5}>
@@ -121,6 +121,7 @@ function LeftControls({ setPhoto }) {
 
 LeftControls.propTypes = {
   setPhoto: PropTypes.func,
+  refresh: PropTypes.bool,
 };
 
 export default LeftControls;

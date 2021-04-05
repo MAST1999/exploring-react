@@ -16,6 +16,8 @@ import BottomTabs from './components/mainPanel/BottomTabs';
 
 function App() {
   const [photo, setPhoto] = useState('');
+  const [currentRegion, setCurrentRegion] = useState({});
+  const [refresh, setRefresh] = useState(false);
 
   return (
     <ChakraProvider theme={theme} h="100%">
@@ -30,19 +32,22 @@ function App() {
       >
         {/* Navigation */}
         <GridItem h={47}>
-          <Navigation />
+          <Navigation useRefresh={[refresh, setRefresh]} />
           <Divider orientation="horizontal" mt={2} />
         </GridItem>
         {/* Main Panel */}
         <GridItem>
           <Flex height="100%">
-            <LeftControls setPhoto={setPhoto} />
-            <ImageCanvas photo={photo} />
+            <LeftControls setPhoto={setPhoto} refresh={refresh} />
+            <ImageCanvas photo={photo} currentRegion={currentRegion} />
           </Flex>
         </GridItem>
         {/* Bottom Panel */}
         <GridItem>
-          <BottomTabs />
+          <BottomTabs
+            setCurrentRegion={setCurrentRegion}
+            currentRegion={currentRegion}
+          />
         </GridItem>
       </Grid>
     </ChakraProvider>
