@@ -11,7 +11,7 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
-function LeftControls({ setPhoto, refresh }) {
+function LeftControls({ setPhoto, refresh, setId }) {
   const [allPhotos, setAllPhotos] = useState(null);
   const accordionPhotoLoad = useRef(null);
 
@@ -71,7 +71,10 @@ function LeftControls({ setPhoto, refresh }) {
                         <ListItem
                           key={photo.id}
                           path={photo.path}
-                          onClick={() => setPhoto(photo.path)}
+                          onClick={() => {
+                            setPhoto(photo.path);
+                            setId(photo.id);
+                          }}
                         >
                           {photo.name}
                         </ListItem>
@@ -122,6 +125,7 @@ function LeftControls({ setPhoto, refresh }) {
 LeftControls.propTypes = {
   setPhoto: PropTypes.func,
   refresh: PropTypes.bool,
+  setId: PropTypes.func,
 };
 
 export default LeftControls;

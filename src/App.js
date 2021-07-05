@@ -3,7 +3,6 @@ import {
   ChakraProvider,
   CSSReset,
   Divider,
-  Flex,
   Grid,
   GridItem,
   theme,
@@ -16,13 +15,17 @@ import BottomTabs from './components/mainPanel/BottomTabs';
 
 function App() {
   const [photo, setPhoto] = useState('');
+  const [id, setId] = useState(null);
   const [currentRegion, setCurrentRegion] = useState({});
+  const [allRegions, setAllRegions] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const [coordsInfo, setCoordsInfo] = useState([]);
 
   return (
     <ChakraProvider theme={theme} h="100%">
       <CSSReset />
       <Grid
+        overflowY="hidden"
         h="100vh"
         templateRows="45px 1fr 300px"
         templateColumns="1fr"
@@ -32,21 +35,41 @@ function App() {
       >
         {/* Navigation */}
         <GridItem h={47}>
-          <Navigation useRefresh={[refresh, setRefresh]} />
+          <Navigation
+            useRefresh={[refresh, setRefresh]}
+            uploadInfo={{ coordsInfo, photo }}
+            id={id}
+            regionId={currentRegion.id}
+          />
           <Divider orientation="horizontal" mt={2} />
         </GridItem>
         {/* Main Panel */}
         <GridItem>
-          <Flex height="100%">
-            <LeftControls setPhoto={setPhoto} refresh={refresh} />
-            <ImageCanvas photo={photo} currentRegion={currentRegion} />
-          </Flex>
+          <Grid height="100%" templateRows="1fr" templateColumns="300px 1fr">
+            <GridItem>
+              <LeftControls
+                setPhoto={setPhoto}
+                refresh={refresh}
+                setId={setId}
+              />
+            </GridItem>
+            <GridItem>
+              <ImageCanvas
+                photo={photo}
+                currentRegion={currentRegion}
+                setCoordsInfo={setCoordsInfo}
+                allRegions={allRegions}
+                id={id}
+              />
+            </GridItem>
+          </Grid>
         </GridItem>
         {/* Bottom Panel */}
         <GridItem>
           <BottomTabs
             setCurrentRegion={setCurrentRegion}
             currentRegion={currentRegion}
+            setAllRegions={setAllRegions}
           />
         </GridItem>
       </Grid>

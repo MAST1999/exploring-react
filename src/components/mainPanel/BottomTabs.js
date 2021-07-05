@@ -26,7 +26,7 @@ const randomColorGenerator = () => {
 };
 
 // eslint-disable-next-line no-unused-vars
-function BottomTabs({ setCurrentRegion, currentRegion }) {
+function BottomTabs({ setCurrentRegion, currentRegion, setAllRegions }) {
   const [regions, setRegions] = useState(null);
   const [inputRegion, setInputRegion] = useState('');
   const [inputColor, setInputColor] = useState(randomColorGenerator());
@@ -34,6 +34,7 @@ function BottomTabs({ setCurrentRegion, currentRegion }) {
   const getRegions = () => {
     axios.get('http://localhost:4000/api/regions/').then(res => {
       if (res.data) {
+        setAllRegions(res.data);
         const defaultRegions = res.data.map(region => ({
           ...region,
           checked: false,
@@ -114,6 +115,7 @@ function BottomTabs({ setCurrentRegion, currentRegion }) {
 BottomTabs.propTypes = {
   setCurrentRegion: PropTypes.func,
   currentRegion: PropTypes.object,
+  setAllRegions: PropTypes.func,
 };
 
 export default BottomTabs;

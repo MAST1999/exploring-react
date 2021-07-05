@@ -16,7 +16,6 @@ function RadioCard(props) {
       currentRegion.checked &&
       props.currentRegion.name !== currentRegion.name
     ) {
-      console.log(currentRegion);
       props.setCurrentRegion(currentRegion);
     }
   };
@@ -31,7 +30,6 @@ function RadioCard(props) {
           newRadios.map(radio => (radio.checked = false));
           newRadios[props.index].checked = true;
           props.setRegions(newRadios);
-          console.log(newRadios);
           setIt();
         }}
       />

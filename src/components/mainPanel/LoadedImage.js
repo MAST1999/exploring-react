@@ -8,7 +8,10 @@ function LoadedImage({ photo, setSize, size }) {
 
   useEffect(() => {
     if (photo) {
-      setSize({ width: 1560, height: 600 });
+      setSize({
+        width: window.innerWidth - 305,
+        height: window.innerHeight - 350,
+      });
 
       let newImage = new window.Image();
       newImage.onload = () => {
@@ -45,4 +48,5 @@ LoadedImage.propTypes = {
   photo: PropTypes.string,
   setSize: PropTypes.func,
   size: PropTypes.object,
+  setDefaultImageSizes: PropTypes.func,
 };

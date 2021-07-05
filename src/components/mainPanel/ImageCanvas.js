@@ -3,8 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Layer, Rect, Stage } from 'react-konva';
 import LoadedImage from './LoadedImage';
+import axios from 'axios';
 
-function ImageCanvas({ photo, currentRegion }) {
+function ImageCanvas({ photo, currentRegion, setCoordsInfo, id, allRegions }) {
   const [size, setSize] = useState({ width: 600, height: 1560 });
 
   const prevPhoto = useRef(null);
@@ -13,12 +14,42 @@ function ImageCanvas({ photo, currentRegion }) {
   const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
-    if (photo !== prevPhoto.current) setRectAnnotations([]);
+    if (photo !== prevPhoto) setRectAnnotations([]);
     prevPhoto.current = photo;
+    if (photo) loadInfo();
   }, [photo]);
 
+  const loadInfo = async () => {
+    const res = await axios.get(`http://localhost:4000/api/photos/${id}`);
+    let tempArray = [];
+    res.data.coords.map(coord => {
+      let regionColor = '';
+      let regionId = null;
+      for (let region of allRegions) {
+        console.log(coord);
+        if (region.id === coord.regionId) {
+          regionColor = region.color;
+          regionId = coord.regionId;
+        }
+      }
+      console.log(regionColor);
+      tempArray.push({
+        x: coord.firstcoord,
+        y: coord.secondcoord,
+        id: `rect-${coord.id}`,
+        width: coord.width,
+        height: coord.height,
+        key: coord.id,
+        color: regionColor,
+        isDragging: false,
+        regionId,
+      });
+    });
+    setRectAnnotations(tempArray);
+  };
+
   const handleDragStart = event => {
-    const id = event.target.id();
+    const id = event.target;
     setRectAnnotations(
       rectAnnotations.map(rect => {
         return {
@@ -29,16 +60,26 @@ function ImageCanvas({ photo, currentRegion }) {
     );
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = event => {
     setDragging(false);
-    setRectAnnotations(
-      rectAnnotations.map(rect => {
+    console.log(rectAnnotations);
+    const newRectAnno = rectAnnotations.map(rect => {
+      if (rect.isDragging !== false) {
         return {
           ...rect,
+          x: event.target.x(),
+          y: event.target.y(),
           isDragging: false,
         };
-      })
-    );
+      }
+      return {
+        ...rect,
+        isDragging: false,
+      };
+    });
+    console.log(newRectAnno);
+    setRectAnnotations(newRectAnno);
+    setCoordsInfo(newRectAnno);
   };
 
   const handleDragMove = () => {
@@ -46,8 +87,7 @@ function ImageCanvas({ photo, currentRegion }) {
   };
 
   const handleMouseDown = event => {
-    console.log(newRectAnnotation.length, !dragging);
-    if (newRectAnnotation.length === 0 && !dragging) {
+    if (newRectAnnotation.length === 0 && !dragging && currentRegion.color) {
       const { x, y } = event.target.getStage().getPointerPosition();
       setNewRectAnnotation([
         { x, y, width: 0, height: 0, key: '0', color: currentRegion.color },
@@ -68,10 +108,14 @@ function ImageCanvas({ photo, currentRegion }) {
         key: rectAnnotations.length + 1,
         isDragging: false,
         color: currentRegion.color,
+        id: `rect-${rectAnnotations.length + 1}`,
+        regionId: currentRegion.id,
       };
       rectAnnotations.push(annotationToAdd);
       setNewRectAnnotation([]);
       setRectAnnotations(rectAnnotations);
+      console.log('here', rectAnnotations);
+      setCoordsInfo(rectAnnotations);
     }
   };
 
@@ -93,8 +137,6 @@ function ImageCanvas({ photo, currentRegion }) {
       ]);
     }
   };
-
-  console.log(currentRegion.color);
 
   const rectAnnotationsToDraw = [...rectAnnotations, ...newRectAnnotation];
   return (
@@ -125,6 +167,7 @@ function ImageCanvas({ photo, currentRegion }) {
                   onDragStart={handleDragStart}
                   onDragEnd={handleDragEnd}
                   onDragMove={handleDragMove}
+                  id={value.id}
                 />
               );
             })}
@@ -142,6 +185,9 @@ function ImageCanvas({ photo, currentRegion }) {
 ImageCanvas.propTypes = {
   photo: PropTypes.string,
   currentRegion: PropTypes.object,
+  setCoordsInfo: PropTypes.func,
+  id: PropTypes.number,
+  allRegions: PropTypes.array,
 };
 
 export default ImageCanvas;
