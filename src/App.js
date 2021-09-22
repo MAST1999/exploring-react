@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   ChakraProvider,
   CSSReset,
@@ -7,11 +6,12 @@ import {
   GridItem,
   theme,
 } from '@chakra-ui/react';
-import Navigation from './components/navigation/Navigation';
+import React, { useState } from 'react';
 import './App.css';
+import BottomTabs from './components/mainPanel/BottomTabs';
 import ImageCanvas from './components/mainPanel/ImageCanvas';
 import LeftControls from './components/mainPanel/LeftControls';
-import BottomTabs from './components/mainPanel/BottomTabs';
+import Navigation from './components/navigation/Navigation';
 
 function App() {
   const [photo, setPhoto] = useState('');
